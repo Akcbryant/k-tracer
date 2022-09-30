@@ -1,7 +1,7 @@
 {
   "name": "k-tracer",
   "version": "1.0.0",
-  "description": "",
+  "description": "Working through the ray tracer challenge with typescript and jest",
   "main": "index.js",
   "scripts": {
     "start:dev": "nodemon",
