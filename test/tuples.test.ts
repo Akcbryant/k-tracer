@@ -1,4 +1,4 @@
-import {Point, Tuple, Vector} from "../src/tuples";
+import {Color, Point, Tuple, Vector} from "../src/tuples";
 
 describe('tuples', () => {
   it('creates a point tuple with w=1', () => {
@@ -186,5 +186,56 @@ describe('vector', () => {
 
     expect(Vector.cross(vector1, vector2)).toEqual(new Vector(-1, 2, -1));
     expect(Vector.cross(vector2, vector1)).toEqual(new Vector(1, -2, 1));
+  });
+});
+
+describe('Colors', () => {
+  it('has red green blue getters', () => {
+    const color = new Color(-0.5, 0.4, 1.7);
+
+    expect(color.red).toEqual(-0.5);
+    expect(color.green).toEqual(0.4);
+    expect(color.blue).toEqual(1.7);
+  });
+
+  it('adds colors', () => {
+    const color1 = new Color(0.9, 0.6, 0.75);
+    const color2 = new Color(0.7, 0.1, 0.25);
+
+    const expected = new Color(1.6, 0.7, 1.0);
+
+    expect(color1.add(color2)).toEqual(expected);
+  });
+
+  it('subtracts colors', () => {
+    const color1 = new Color(0.9, 0.6, 0.75);
+    const color2 = new Color(0.7, 0.1, 0.25);
+    const subtractedColor = color1.subtract(color2);
+
+    const expected = new Color(0.2, 0.5, 0.5);
+
+    expect(subtractedColor.red).toBeCloseTo(expected.red);
+    expect(subtractedColor.green).toBeCloseTo(expected.green);
+    expect(subtractedColor.blue).toBeCloseTo(expected.blue);
+  });
+
+  it('multiplies colors by a scalar', () => {
+    const multipliedColor = new Color(0.2, 0.3, 0.4).multiply(2);
+
+    const expected = new Color(0.4, 0.6, 0.8);
+
+    expect(multipliedColor).toEqual(expected);
+  });
+
+  it('multiplies colors', () => {
+    const color1 = new Color(1, 0.2, 0.4);
+    const color2 = new Color(0.9, 1, 0.1);
+    const newColor = Color.hadamardProduct(color1, color2);
+
+    const expected = new Color(0.9, 0.2, 0.04);
+
+    expect(newColor.red).toBeCloseTo(expected.red);
+    expect(newColor.green).toBeCloseTo(expected.green);
+    expect(newColor.blue).toBeCloseTo(expected.blue);
   });
 });

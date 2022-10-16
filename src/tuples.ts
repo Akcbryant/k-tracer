@@ -90,7 +90,45 @@ export class Vector extends Tuple {
   }
 }
 
+export class Color extends Tuple {
+
+  red: number;
+  green: number;
+  blue: number;
+
+  constructor(red: number, green: number, blue: number) {
+    super(0, 0, 0, TupleType.Point);
+    this.red = red;
+    this.green = green;
+    this.blue = blue;
+  }
+
+  static hadamardProduct(color1: Color, color2: Color) {
+    return new Color(color1.red * color2.red,
+      color1.green * color2.green,
+      color1.blue * color2.blue)
+  }
+
+  subtract(color: Color): Color {
+    return new Color(this.red - color.red,
+      this.green - color.green,
+      this.blue - color.blue);
+  }
+
+  multiply(scalar: number): Color {
+    return new Color(this.red * scalar,
+      this.green * scalar,
+      this.blue * scalar);
+  }
+
+  add(color: Color): Color {
+    return new Color(this.red + color.red,
+      this.green + color.green,
+      this.blue + color.blue);
+  }
+}
+
 export enum TupleType {
   Vector = 0,
-  Point = 1
+  Point = 1,
 }
