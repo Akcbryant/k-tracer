@@ -1,4 +1,4 @@
-import {Color} from "./tuples";
+import {Color, Point} from "./tuples";
 
 export class Canvas {
   width: number;
@@ -20,10 +20,14 @@ export class Canvas {
   }
 
   writePixel(x: number, y: number, color: Color) {
-    const pixel = this.pixelAt(x, y);
-    pixel!.red = color.red;
-    pixel!.green = color.green;
-    pixel!.blue = color.blue;
+    try {
+      const pixel = this.pixelAt(x, y);
+      pixel!.red = color.red;
+      pixel!.green = color.green;
+      pixel!.blue = color.blue;
+    } catch {
+      console.log('no pixel there')
+    }
   }
 
   pixelAt(x: number, y: number): Color {
@@ -35,10 +39,12 @@ export class Canvas {
     const colorValues = this.pixels.map(x => this.colorToPPM(x));
     const colorValuesString = this.colorPPMArrayToString(colorValues);
 
-    console.log(colorValuesString)
-
     const ppmString = `${header}\n${colorValuesString}\n`;
     return ppmString;
+  }
+
+  pointInBounds(point: Point) {
+    return Math.round(point.x) <= this.width && Math.round(point.y) <= this.height;
   }
 
   private colorPPMArrayToString(colorValues: string[]): string {
