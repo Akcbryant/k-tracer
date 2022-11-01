@@ -4,6 +4,10 @@ export class Tuple {
   public z: number;
   public w: TupleType;
 
+  get points(): any[] {
+    return [this.x, this.y, this.z, this.w];
+  };
+
   constructor(x: number, y: number, z: number, tupleType: TupleType) {
     this.x = x;
     this.y = y;
