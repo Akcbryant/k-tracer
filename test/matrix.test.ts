@@ -1,5 +1,5 @@
-import {IdentityMatrix, Matrix} from "../src/matrix";
-import {Tuple} from "../src/tuples";
+import {IdentityMatrix, Matrix, RotationX, RotationY, RotationZ, Scaling, Shearing, Translation} from "../src/matrix";
+import {Point, Tuple, Vector} from "../src/tuples";
 
 describe('Matrix', () => {
   it('initializes a 4x4 matrix', () => {
@@ -347,6 +347,229 @@ describe('Matrix', () => {
           expect(value).toBeCloseTo(matrix.points[rowIndex][columnIndex]);
         });
       })
+    });
+  });
+
+  describe('translation moves a point', () => {
+    it('multiplies by a translation matrix', () => {
+      const transform = new Translation(5, -3, 2);
+
+      const point = new Point(-3, 4, 5);
+
+      expect(transform.multiplyByTuple(point)).toEqual(new Point(2, 1, 7));
+    });
+
+    it('multiplies by the inverse of a translation matrix', () => {
+      const inverseTransform = new Translation(5, -3, 2).inverse();
+
+      const point = new Point(-3, 4, 5);
+
+      expect(inverseTransform.multiplyByTuple(point)).toEqual(new Point(-8, 7, 3));
+    });
+
+    it('translation does not affect vectors', () => {
+      const transform = new Translation(5, -3, 2);
+
+      const vector = new Vector(-3, 4, 5);
+
+      expect(transform.multiplyByTuple(vector)).toEqual(vector);
+    });
+  });
+
+  describe('scaling moves a point by adding to it', () => {
+    it('applies to a point', () => {
+      const transform = new Scaling(2, 3, 4);
+
+      const point = new Point(-4, 6, 8);
+
+      expect(transform.multiplyByTuple(point)).toEqual(new Point(-8, 18, 32));
+    });
+
+    it('applies to a vector', () => {
+      const transform = new Scaling(2, 3, 4);
+
+      const point = new Vector(-4, 6, 8);
+
+      expect(transform.multiplyByTuple(point)).toEqual(new Vector(-8, 18, 32));
+    });
+
+    it('applies inverse of transform to a vector', () => {
+      const inverseTransform = new Scaling(2, 3, 4).inverse();
+
+      const result = inverseTransform.multiplyByTuple(new Vector(-4, 6, 8));
+
+      const expected = new Vector(-2, 2, 2);
+      expect(result.x).toBeCloseTo(expected.x);
+      expect(result.y).toBeCloseTo(expected.y);
+      expect(result.z).toBeCloseTo(expected.z);
+      expect(result.w).toBeCloseTo(expected.w);
+    });
+
+    it('reflection is scaling by a negative attitude', () => {
+      const transform = new Scaling(-1, 1, 1);
+
+      const point = new Point(2, 3, 4);
+
+      expect(transform.multiplyByTuple(point)).toEqual(new Point(-2, 3, 4));
+    });
+  });
+
+  describe('rotation around the x axis', () => {
+    it('rotates a point around the x axis', () => {
+      const point = new Point(0, 1, 0);
+      const halfQuarter = new RotationX(Math.PI / 4).multiplyByTuple(point);
+      const fullQuarter = new RotationX(Math.PI / 2).multiplyByTuple(point);
+
+      const expectedHalfQuarterPoint = new Point(0, Math.sqrt(2) / 2, Math.sqrt(2) / 2)
+      const expectedFullQuarterPoint = new Point(0, 0, 1);
+
+      expect(halfQuarter.x).toBeCloseTo(expectedHalfQuarterPoint.x)
+      expect(halfQuarter.y).toBeCloseTo(expectedHalfQuarterPoint.y)
+      expect(halfQuarter.z).toBeCloseTo(expectedHalfQuarterPoint.z)
+      expect(halfQuarter.w).toBeCloseTo(expectedHalfQuarterPoint.w)
+      expect(fullQuarter.x).toBeCloseTo(expectedFullQuarterPoint.x)
+      expect(fullQuarter.y).toBeCloseTo(expectedFullQuarterPoint.y)
+      expect(fullQuarter.z).toBeCloseTo(expectedFullQuarterPoint.z)
+      expect(fullQuarter.w).toBeCloseTo(expectedFullQuarterPoint.w)
+    });
+
+    it('the inverse of an x-rotation rotates in the opposite direction', () => {
+      const point = new Point(0, 1, 0);
+      const halfQuarter = new RotationX(Math.PI / 4)
+        .inverse()
+        .multiplyByTuple(point);
+
+      const expectedHalfQuarterPoint = new Point(0, Math.sqrt(2) / 2, -Math.sqrt(2) / 2)
+
+      expect(halfQuarter.x).toBeCloseTo(expectedHalfQuarterPoint.x)
+      expect(halfQuarter.y).toBeCloseTo(expectedHalfQuarterPoint.y)
+      expect(halfQuarter.z).toBeCloseTo(expectedHalfQuarterPoint.z)
+      expect(halfQuarter.w).toBeCloseTo(expectedHalfQuarterPoint.w)
+    });
+  });
+
+  describe('rotation around the y axis', () => {
+    it('rotates a point around the y axis', () => {
+      const point = new Point(0, 0, 1);
+      const halfQuarter = new RotationY(Math.PI / 4).multiplyByTuple(point);
+      const fullQuarter = new RotationY(Math.PI / 2).multiplyByTuple(point);
+
+      const expectedHalfQuarterPoint = new Point(Math.sqrt(2) / 2, 0, Math.sqrt(2) / 2)
+      const expectedFullQuarterPoint = new Point(1, 0, 0);
+
+      expect(halfQuarter.x).toBeCloseTo(expectedHalfQuarterPoint.x)
+      expect(halfQuarter.y).toBeCloseTo(expectedHalfQuarterPoint.y)
+      expect(halfQuarter.z).toBeCloseTo(expectedHalfQuarterPoint.z)
+      expect(halfQuarter.w).toBeCloseTo(expectedHalfQuarterPoint.w)
+      expect(fullQuarter.x).toBeCloseTo(expectedFullQuarterPoint.x)
+      expect(fullQuarter.y).toBeCloseTo(expectedFullQuarterPoint.y)
+      expect(fullQuarter.z).toBeCloseTo(expectedFullQuarterPoint.z)
+      expect(fullQuarter.w).toBeCloseTo(expectedFullQuarterPoint.w)
+    });
+  });
+
+  describe('rotation around the z axis', () => {
+    it('rotates a point around the z axis', () => {
+      const point = new Point(0, 1, 0);
+      const halfQuarter = new RotationZ(Math.PI / 4).multiplyByTuple(point);
+      const fullQuarter = new RotationZ(Math.PI / 2).multiplyByTuple(point);
+
+      const expectedHalfQuarterPoint = new Point(-(Math.sqrt(2) / 2), (Math.sqrt(2) / 2), 0)
+      const expectedFullQuarterPoint = new Point(-1, 0, 0);
+
+      expect(halfQuarter.x).toBeCloseTo(expectedHalfQuarterPoint.x)
+      expect(halfQuarter.y).toBeCloseTo(expectedHalfQuarterPoint.y)
+      expect(halfQuarter.z).toBeCloseTo(expectedHalfQuarterPoint.z)
+      expect(halfQuarter.w).toBeCloseTo(expectedHalfQuarterPoint.w)
+      expect(fullQuarter.x).toBeCloseTo(expectedFullQuarterPoint.x)
+      expect(fullQuarter.y).toBeCloseTo(expectedFullQuarterPoint.y)
+      expect(fullQuarter.z).toBeCloseTo(expectedFullQuarterPoint.z)
+      expect(fullQuarter.w).toBeCloseTo(expectedFullQuarterPoint.w)
+    });
+  });
+
+  describe('shearing changes each coordinate in proportion to the other two', () => {
+    it('moves x in proportion to y', () => {
+      const shearing = new Shearing(1, 0, 0, 0, 0, 0);
+
+      const point = new Point(2, 3, 4);
+
+      expect(shearing.multiplyByTuple(point)).toEqual(new Point(5, 3, 4));
+    });
+
+    it('moves x in proportion to z', () => {
+      const shearing = new Shearing(0, 1, 0, 0, 0, 0);
+
+      const point = new Point(2, 3, 4);
+
+      expect(shearing.multiplyByTuple(point)).toEqual(new Point(6, 3, 4));
+    });
+
+    it('moves y in proportion to x', () => {
+      const shearing = new Shearing(0, 0, 1, 0, 0, 0);
+
+      const point = new Point(2, 3, 4);
+
+      expect(shearing.multiplyByTuple(point)).toEqual(new Point(2, 5, 4));
+    });
+
+    it('moves y in proportion to z', () => {
+      const shearing = new Shearing(0, 0, 0, 1, 0, 0);
+
+      const point = new Point(2, 3, 4);
+
+      expect(shearing.multiplyByTuple(point)).toEqual(new Point(2, 7, 4));
+    });
+
+    it('moves z in proportion to x', () => {
+      const shearing = new Shearing(0, 0, 0, 0, 1, 0);
+
+      const point = new Point(2, 3, 4);
+
+      expect(shearing.multiplyByTuple(point)).toEqual(new Point(2, 3, 6));
+    });
+
+    it('moves z in proportion to y', () => {
+      const shearing = new Shearing(0, 0, 0, 0, 0, 1);
+
+      const point = new Point(2, 3, 4);
+
+      expect(shearing.multiplyByTuple(point)).toEqual(new Point(2, 3, 7));
+    });
+  });
+
+  describe('chaining transformations', () => {
+    it('applies transformations in sequence', () => {
+      const p1 = new Point(1, 0, 1);
+      const A = new RotationX(Math.PI / 2);
+      const B = new Scaling(5, 5, 5);
+      const C = new Translation(10, 5, 7);
+
+      const p2 = A.multiplyByTuple(p1);
+      const expectedP2 = new Point(1, -1, 0);
+      expect(p2.x).toBeCloseTo(expectedP2.x);
+      expect(p2.y).toBeCloseTo(expectedP2.y);
+      expect(p2.z).toBeCloseTo(expectedP2.z);
+      expect(p2.w).toBeCloseTo(expectedP2.w);
+      const p3 = B.multiplyByTuple(p2);
+      const expectedP3 = new Point(5, -5, 0);
+      expect(p3.x).toBeCloseTo(expectedP3.x);
+      expect(p3.y).toBeCloseTo(expectedP3.y);
+      expect(p3.z).toBeCloseTo(expectedP3.z);
+      expect(p3.w).toBeCloseTo(expectedP3.w);
+      const p4 = C.multiplyByTuple(p3);
+      expect(p4).toEqual(new Point(15, 0, 7));
+    });
+
+    it('chained transformations must be applied in reverse order', () => {
+      const p = new Point(1, 0, 1);
+      const A = new RotationX(Math.PI / 2);
+      const B = new Scaling(5, 5, 5);
+      const C = new Translation(10, 5, 7);
+
+      // TODO: Try to implement fluent api, something like this: https://github.com/basarat/demo-fluent/blob/master/src/index.ts
+      const T = C.multiply(B).multiply(A)
+      expect(T.multiplyByTuple(p)).toEqual(new Point(15, 0, 7));
     });
   });
 });
