@@ -21,7 +21,7 @@ export class Canvas {
 
   writePixel(x: number, y: number, color: Color) {
     try {
-      const pixel = this.pixelAt(x, y);
+      const pixel = this.pixelAt(Math.round(x), Math.round(y));
       pixel!.red = color.red;
       pixel!.green = color.green;
       pixel!.blue = color.blue;
