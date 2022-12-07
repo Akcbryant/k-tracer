@@ -1,0 +1,211 @@
+import {Point, Vector} from "../src/tuples";
+import {Intersection, Intersections, Ray, Sphere} from "../src/ray";
+import {IdentityMatrix, Scaling, Translation} from "../src/matrix";
+
+describe('ray', () => {
+  it('creates a ray with origin and direction', () => {
+    const origin = new Point(1, 2, 3);
+    const direction = new Vector(4, 5, 6);
+
+    const ray = new Ray(origin, direction);
+
+    expect(ray.origin).toEqual(origin);
+    expect(ray.direction).toEqual(direction);
+  });
+
+  it('computes a point from a distance', () => {
+    const ray = new Ray(new Point(2, 3, 4), new Vector(1, 0, 0));
+
+    expect(ray.position(0)).toEqual(new Point(2, 3, 4));
+    expect(ray.position(1)).toEqual(new Point(3, 3, 4));
+    expect(ray.position(-1)).toEqual(new Point(1, 3, 4));
+    expect(ray.position(2.5)).toEqual(new Point(4.5, 3, 4));
+  });
+
+  it('translates a ray', () => {
+    const ray = new Ray(new Point(1, 2, 3), new Vector(0, 1, 0));
+    const translation = new Translation(3, 4, 5);
+
+    const transformedRay = ray.transform(translation);
+
+    expect(transformedRay.origin).toEqual(new Point(4, 6, 8));
+    expect(transformedRay.direction).toEqual(new Vector(0, 1, 0));
+  });
+
+  it('scales a ray', () => {
+    const ray = new Ray(new Point(1, 2, 3), new Vector(0, 1, 0));
+    const scaling = new Scaling(2, 3, 4);
+
+    const transformedRay = ray.transform(scaling);
+
+    expect(transformedRay.origin).toEqual(new Point(2, 6, 12));
+    expect(transformedRay.direction).toEqual(new Vector(0, 3, 0));
+  });
+});
+
+describe('sphere', () => {
+  it('intersects a sphere at two points', () => {
+    const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+
+    const sphere = new Sphere();
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(2);
+    expect(xs.intersections[0].t).toBe(4);
+    expect(xs.intersections[1].t).toBe(6);
+  });
+
+  it('intersect sets the object on the intersection', () => {
+    const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+
+    const sphere = new Sphere();
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(2);
+    expect(xs.intersections[0].object).toBe(sphere);
+    expect(xs.intersections[1].object).toBe(sphere);
+  });
+
+  it('intersects a sphere at a tangent', () => {
+    const ray = new Ray(new Point(0, 1, -5), new Vector(0, 0, 1));
+
+    const sphere = new Sphere();
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(2);
+    expect(xs.intersections[0].t).toBe(5);
+    expect(xs.intersections[1].t).toBe(5);
+  });
+
+  it('misses a sphere', () => {
+    const ray = new Ray(new Point(0, 2, -5), new Vector(0, 0, 1));
+
+    const sphere = new Sphere();
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(0);
+  });
+
+  it('returns two intersections when a ray originates inside a sphere', () => {
+    const ray = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+
+    const sphere = new Sphere();
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(2);
+    expect(xs.intersections[0].t).toBe(-1);
+    expect(xs.intersections[1].t).toBe(1);
+  });
+
+  it('returns two intersections when a ray originates outside a sphere', () => {
+    const ray = new Ray(new Point(0, 0, 5), new Vector(0, 0, 1));
+
+    const sphere = new Sphere();
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(2);
+    expect(xs.intersections[0].t).toBe(-6);
+    expect(xs.intersections[1].t).toBe(-4);
+  });
+
+  it('has a default transform equal to the identity matrix', () => {
+    const sphere = new Sphere();
+
+    expect(sphere.transform).toEqual(new IdentityMatrix());
+  });
+
+  it('can set a spheres transform', () => {
+    const sphere = new Sphere();
+
+    const expectedTransform = new Translation(2, 3, 4);
+    sphere.transform = expectedTransform;
+
+    expect(sphere.transform).toEqual(expectedTransform);
+  });
+
+  it('intersects a scaled sphere with a ray', () => {
+    const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+    const sphere = new Sphere();
+    sphere.transform = new Scaling(2, 2, 2);
+
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(2);
+    expect(xs.intersections[0].t).toBe(3);
+    expect(xs.intersections[1].t).toBe(7);
+  });
+
+  it('intersects a translated sphere with a ray', () => {
+    const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+    const sphere = new Sphere();
+    sphere.transform = new Translation(5, 0, 0);
+
+    const xs = sphere.intersect(ray);
+
+    expect(xs.intersections.length).toBe(0);
+  });
+});
+
+describe('Intersection', () => {
+  it('encapsulates t and an object', () => {
+    const sphere = new Sphere();
+
+    const intersection = new Intersection(3.5, sphere);
+
+    expect(intersection.t).toBe(3.5);
+    expect(intersection.object).toBe(sphere);
+  });
+
+  it('aggregates intersections', () => {
+    const sphere = new Sphere();
+
+    const i1 = new Intersection(1, sphere);
+    const i2 = new Intersection(2, sphere);
+    const result = new Intersections([i1, i2]);
+
+    expect(result.intersections[0].t).toBe(1);
+    expect(result.intersections[1].t).toBe(2);
+  });
+
+  it('returns hit when all intersections have positive t', () => {
+    const sphere = new Sphere();
+    const i1 = new Intersection(1, sphere);
+    const i2 = new Intersection(2, sphere);
+
+    const intersections = new Intersections([i2, i1]);
+
+    expect(intersections.hit()).toEqual(i1);
+  });
+
+  it('returns hit when some intersections have negative t', () => {
+    const sphere = new Sphere();
+    const i1 = new Intersection(-1, sphere);
+    const i2 = new Intersection(1, sphere);
+
+    const intersections = new Intersections([i2, i1]);
+
+    expect(intersections.hit()).toEqual(i2);
+  });
+
+  it('returns hit when all intersections have negative t', () => {
+    const sphere = new Sphere();
+    const i1 = new Intersection(-2, sphere);
+    const i2 = new Intersection(-1, sphere);
+
+    const intersections = new Intersections([i2, i1]);
+
+    expect(intersections.hit()).toEqual(null);
+  });
+
+  it('returns lowest nonnegative intersection', () => {
+    const sphere = new Sphere();
+    const i1 = new Intersection(5, sphere);
+    const i2 = new Intersection(7, sphere);
+    const i3 = new Intersection(-3, sphere);
+    const i4 = new Intersection(2, sphere);
+
+    const intersections = new Intersections([i1, i2, i3, i4]);
+
+    expect(intersections.hit()).toEqual(i4);
+  });
+});
