@@ -187,6 +187,27 @@ describe('vector', () => {
     expect(Vector.cross(vector1, vector2)).toEqual(new Vector(-1, 2, -1));
     expect(Vector.cross(vector2, vector1)).toEqual(new Vector(1, -2, 1));
   });
+
+  it('reflects a vector approaching at 45 degrees', () => {
+    const vector = new Vector(1, -1, 0);
+    const vector2 = new Vector(0, 1, 0);
+
+    const reflectedVector = Vector.reflect(vector, vector2);
+
+    expect(reflectedVector).toEqual(new Vector(1, 1, 0));
+  });
+
+  it('reflects a vector off a slanted surface', () => {
+    const vector = new Vector(0, -1, 0);
+    const vector2 = new Vector(Math.sqrt(2)/2, Math.sqrt(2)/2, 0);
+
+    const reflectedVector = Vector.reflect(vector, vector2);
+
+    const expected = new Vector(1, 0, 0);
+    expect(reflectedVector.x).toBeCloseTo(expected.x);
+    expect(reflectedVector.y).toBeCloseTo(expected.y);
+    expect(reflectedVector.z).toBeCloseTo(expected.z);
+  });
 });
 
 describe('Colors', () => {

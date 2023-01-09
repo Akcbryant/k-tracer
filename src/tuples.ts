@@ -92,6 +92,11 @@ export class Vector extends Tuple {
       a.z * b.x - a.x * b.z,
       a.x * b.y - a.y * b.x)
   }
+
+  static reflect(inVector: Vector, normalVector: Vector): Vector {
+    const subtractValue = normalVector.multiply(2).multiply(Vector.dot(inVector, normalVector));
+    return inVector.subtract(subtractValue);
+  }
 }
 
 export class Color extends Tuple {
