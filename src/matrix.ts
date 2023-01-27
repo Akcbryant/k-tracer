@@ -1,4 +1,4 @@
-import {Tuple} from "./tuples";
+import {Point, Tuple, Vector} from "./tuples";
 
 export class Matrix {
   public points: number[][];
@@ -185,5 +185,22 @@ export class Shearing extends Matrix {
     ];
 
     super(points);
+  }
+}
+
+export class ViewTransform extends Matrix {
+  constructor(from: Point, to: Point, up: Vector) {
+    const forward = to.subtract(from).normalize();
+    const left = Vector.cross(forward, up.normalize());
+    const trueUp = Vector.cross(left, forward);
+    const orientation = new Matrix([
+      [left.x, left.y, left.z, 0],
+      [trueUp.x, trueUp.y, trueUp.z, 0],
+      [-forward.x, -forward.y, -forward.z, 0],
+      [0, 0, 0, 1],
+    ]);
+    const transform = orientation.multiply(new Translation(-from.x, -from.y, -from.z));
+
+    super(transform.points);
   }
 }

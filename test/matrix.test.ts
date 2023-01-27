@@ -1,4 +1,14 @@
-import {IdentityMatrix, Matrix, RotationX, RotationY, RotationZ, Scaling, Shearing, Translation} from "../src/matrix";
+import {
+  IdentityMatrix,
+  Matrix,
+  RotationX,
+  RotationY,
+  RotationZ,
+  Scaling,
+  Shearing,
+  Translation,
+  ViewTransform
+} from "../src/matrix";
 import {Point, Tuple, Vector} from "../src/tuples";
 
 describe('Matrix', () => {
@@ -570,6 +580,47 @@ describe('Matrix', () => {
       // TODO: Try to implement fluent api, something like this: https://github.com/basarat/demo-fluent/blob/master/src/index.ts
       const T = C.multiply(B).multiply(A)
       expect(T.multiplyByTuple(p)).toEqual(new Point(15, 0, 7));
+    });
+  });
+
+  describe('ViewTransform Matrix', () => {
+    it('defaul orientation equals the identity matrix', () => {
+      const from = new Point(0, 0, 0);
+      const to = new Point(0, 0, -1);
+      const up = new Vector(0, 1, 0);
+
+      const transformMatrix = new ViewTransform(from, to, up);
+
+      expect(transformMatrix.points).toEqual(new IdentityMatrix().points);
+    });
+
+    it('moves the world', () => {
+      const from = new Point(0, 0, 8);
+      const to = new Point(0, 0, 0);
+      const up = new Vector(0, 1, 0);
+
+      const transformMatrix = new ViewTransform(from, to, up);
+
+      expect(transformMatrix.points).toEqual(new Translation(0, 0, -8).points);
+    });
+
+    it('handles arbitrary view transformation', () => {
+      const from = new Point(1, 3, 2);
+      const to = new Point(4, -2, 8);
+      const up = new Vector(1, 1, 0);
+
+      const transformMatrix = new ViewTransform(from, to, up);
+
+      const expectedPoints = [
+        [-0.50709, 0.50709, 0.67612, -2.36643],
+        [ 0.76772, 0.60609, 0.12122, -2.82843],
+        [-0.35857, 0.59761, -0.71714, 0.00000],
+        [-0.00000, 0.00000, 0.000000, 1.00000],
+      ].flat();
+      const resultingPoints = transformMatrix.points.flat();
+      resultingPoints.forEach((x, i) => {
+        expect(x).toBeCloseTo(expectedPoints[i]);
+      });
     });
   });
 });

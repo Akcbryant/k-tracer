@@ -106,4 +106,49 @@ describe('Intersection', () => {
 
     expect(intersections.hit()).toEqual(i4);
   });
+
+  describe('prepareComputations', () => {
+    it('precomputes the state of an intersection', () => {
+      const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+      const shape = new Sphere();
+      const intersection = new Intersection(4, shape);
+
+      const computations = intersection.prepareComputations(ray);
+
+      expect(computations.t).toEqual(intersection.t);
+      expect(computations.object).toEqual(intersection.object);
+      expect(computations.point).toEqual(new Point(0, 0, -1));
+      expect(computations.eyeV.w).toBeCloseTo(0);
+      expect(computations.eyeV.x).toBeCloseTo(0);
+      expect(computations.eyeV.y).toBeCloseTo(0);
+      expect(computations.normalV).toEqual(new Vector(0, 0, -1));
+    });
+
+    it('computes the hit when an intersection occurs on the outside', () => {
+      const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+      const shape = new Sphere();
+      const intersection = new Intersection(4, shape);
+
+      const computations = intersection.prepareComputations(ray);
+
+      expect(computations.inside).toBe(false);
+    });
+
+    it('computes the hit when an intersection occurs on the inside', () => {
+      const ray = new Ray(new Point(0, 0, 0), new Vector(0, 0, 1));
+      const shape = new Sphere();
+      const intersection = new Intersection(1, shape);
+
+      const computations = intersection.prepareComputations(ray);
+
+      expect(computations.point).toEqual(new Point(0, 0, 1));
+      expect(computations.eyeV.w).toBeCloseTo(0);
+      expect(computations.eyeV.x).toBeCloseTo(0);
+      expect(computations.eyeV.y).toBeCloseTo(0);
+      expect(computations.normalV.w).toBeCloseTo(0);
+      expect(computations.normalV.x).toBeCloseTo(0);
+      expect(computations.normalV.y).toBeCloseTo(0);
+      expect(computations.inside).toBe(true);
+    });
+  });
 });

@@ -1,5 +1,6 @@
 import {Point, Vector} from "./tuples";
 import {Translation} from "./matrix";
+import {WorldObject} from "./sphere";
 
 export class Ray {
   origin: Point;
@@ -23,11 +24,26 @@ export class Ray {
 
 export class Intersection {
   t: number;
-  object: any;
+  object: WorldObject;
 
-  constructor(t: number, object: any) {
+  constructor(t: number, object: WorldObject) {
     this.t = t;
     this.object = object;
+  }
+
+  prepareComputations(ray: Ray): Computations {
+    const point = ray.position(this.t);
+    const normalV = this.object.normalAt(point);
+    const eyeV = ray.direction.negate();
+    const isInside = Vector.dot(normalV, eyeV) < 0;
+    return {
+      t: this.t,
+      object: this.object,
+      point: point,
+      eyeV: eyeV,
+      normalV: isInside ? normalV.negate() : normalV,
+      inside: isInside
+    }
   }
 }
 
@@ -43,4 +59,13 @@ export class Intersections {
 
     return this.intersections.find(x => x.t === lowestNonNegative) ?? null;
   }
+}
+
+export class Computations {
+  t!: number;
+  object!: WorldObject;
+  point!: Point;
+  eyeV!: Point;
+  normalV!: Point;
+  inside!: boolean;
 }
