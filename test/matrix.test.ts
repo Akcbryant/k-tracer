@@ -584,7 +584,7 @@ describe('Matrix', () => {
   });
 
   describe('ViewTransform Matrix', () => {
-    it('defaul orientation equals the identity matrix', () => {
+    it('default orientation equals the identity matrix', () => {
       const from = new Point(0, 0, 0);
       const to = new Point(0, 0, -1);
       const up = new Vector(0, 1, 0);
