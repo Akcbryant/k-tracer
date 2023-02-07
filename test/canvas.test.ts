@@ -16,11 +16,7 @@ describe('Canvas', () => {
     canvas.writePixel(2, 3, red);
 
     const expectedPixel = canvas.pixelAt(2, 3);
-    expect(expectedPixel.x).toBe(2);
-    expect(expectedPixel.y).toBe(3);
-    expect(expectedPixel.red).toBe(1);
-    expect(expectedPixel.green).toBe(0);
-    expect(expectedPixel.blue).toBe(0);
+    expect(expectedPixel).toEqual(red);
   });
 
   describe('PPM - Portable Pixmap', () => {
@@ -34,18 +30,19 @@ describe('Canvas', () => {
       + '255 0 0 0 0 0 0 0 0 0 0 0 0 0 0\n'
       + '0 0 0 0 0 0 0 128 0 0 0 0 0 0 0\n'
       + '0 0 0 0 0 0 0 0 0 0 0 0 0 0 255\n';
-
       expect(canvas.toPPM()).toEqual(expectedPPM);
     });
 
     it('constructs the PPM pixel data', () => {
-      const canvas = new Canvas(10, 2, new Color(1, 0.8, 0.6));
+      const width = 10;
+      const height = 2
+      const canvas = new Canvas(width, height, new Color(1, 0.8, 0.6));
 
       const expectedPPM =  'P3\n10 2\n255\n'
         + '255 204 153 255 204 153 255 204 153 255 204 153 255 204 153\n'
         + '255 204 153 255 204 153 255 204 153 255 204 153 255 204 153\n'
-        + '255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204 153\n'
-        + '255 204 153 255 204 153 255 204 153 255 204 153\n';
+        + '255 204 153 255 204 153 255 204 153 255 204 153 255 204 153\n'
+        + '255 204 153 255 204 153 255 204 153 255 204 153 255 204 153\n';
 
       expect(canvas.toPPM()).toEqual(expectedPPM);
     });

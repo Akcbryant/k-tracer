@@ -1,7 +1,5 @@
 import {Color, Point, Vector} from "./tuples";
-import {Canvas} from "./canvas";
-import {RotationX, RotationY, RotationZ, Scaling, Shearing, Translation, ViewTransform} from "./matrix";
-import {Ray} from "./ray";
+import {RotationX, RotationY, Scaling, Translation, ViewTransform} from "./matrix";
 import {Sphere} from "./sphere";
 import {Material} from "./material";
 import {Light} from "./light";
@@ -56,7 +54,7 @@ const world = new World();
 world.light = new Light(new Point(-10, 10, -10), new Color(1, 1, 1));
 world.objects = [floor, leftWall, rightWall, middle, right, left];
 
-const camera = new Camera(50, 50, Math.PI/3);
+const camera = new Camera(1024, 1024, Math.PI/3);
 camera.transform = new ViewTransform(new Point(0, 1.5, -5),
   new Point(0, 1, 0),
   new Vector(0, 1, 0));

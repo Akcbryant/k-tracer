@@ -1,6 +1,6 @@
 import {IdentityMatrix, RotationY, Translation, ViewTransform} from "../src/matrix";
 import {Camera} from "../src/camera";
-import {Point, Vector} from "../src/tuples";
+import {Color, Point, Vector} from "../src/tuples";
 import {World} from "../src/world";
 
 describe('Camera', () => {
@@ -80,10 +80,11 @@ describe('Camera', () => {
 
       const image = camera.render(world);
       const pixel = image.pixelAt(5, 5);
+      const expectedColor = new Color(0.38066, 0.47583, 0.2855);
 
-      expect(pixel.red).toBeCloseTo(pixel.red);
-      expect(pixel.green).toBeCloseTo(pixel.green);
-      expect(pixel.blue).toBeCloseTo(pixel.blue);
+      expect(pixel.red).toBeCloseTo(expectedColor.red);
+      expect(pixel.green).toBeCloseTo(expectedColor.green);
+      expect(pixel.blue).toBeCloseTo(expectedColor.blue);
     });
   });
 });

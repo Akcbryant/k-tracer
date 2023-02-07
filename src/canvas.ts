@@ -3,66 +3,54 @@ import {Color, Point} from "./tuples";
 export class Canvas {
   width: number;
   height: number;
-  pixels: Color[];
+  pixels: Float64Array;
 
-  constructor(width: number, height: number, color: Color = new Color(0, 0, 0)) {
+  constructor(width: number, height: number, color?: Color) {
     this.width = width;
     this.height = height;
-    this.pixels = [];
-    for (let i = 0; i < width; i++) {
-      for (let j = 0; j < height; j++) {
-        const newColor = new Color(color.red, color.green, color.blue)
-        newColor.x = i;
-        newColor.y = j;
-        this.pixels.push(newColor);
+    this.pixels = new Float64Array(width * height * 3);
+    for (let i = 0; i < this.pixels.length; i++) {
+      this.pixels[i] = 0;
+    }
+
+    if (color != null) {
+      for (let x = 0; x < width; x++) {
+        for (let y = 0; y < height ; y++) {
+          this.writePixel(x, y, color);
+        }
       }
     }
   }
 
   writePixel(x: number, y: number, color: Color) {
-    try {
-      const pixel = this.pixelAt(Math.round(x), Math.round(y));
-      pixel!.red = color.red;
-      pixel!.green = color.green;
-      pixel!.blue = color.blue;
-    } catch {
-      console.log('no pixel there')
-    }
+      if (x < 0|| x >= this.width || y < 0 || y >= this.height) return;
+
+      const pixelIndex = Math.round(y) * this.width * 3 + Math.round(x) * 3;
+      this.pixels[pixelIndex] = color.red;
+      this.pixels[pixelIndex + 1] = color.green;
+      this.pixels[pixelIndex + 2] = color.blue;
   }
 
   pixelAt(x: number, y: number): Color {
-    return this.pixels.find(pixel => pixel.x === x && pixel.y === y)!;
+    const pixelIndex = Math.round(y) * this.width * 3 + Math.round(x) * 3;
+    return new Color(this.pixels[pixelIndex], this.pixels[pixelIndex + 1], this.pixels[pixelIndex + 2]);
   }
 
   toPPM(): string {
-    const header = `P3\n${this.width} ${this.height}\n255`;
-    const colorValues = this.pixels.map(x => this.colorToPPM(x));
-    const colorValuesString = this.colorPPMArrayToString(colorValues);
-
-    const ppmString = `${header}\n${colorValuesString}\n`;
-    return ppmString;
+    let ppm = "P3\n";
+    ppm += this.width + " " + this.height + "\n";
+    ppm += "255";
+    for (let i = 0; i < this.pixels.length; i += 3)
+    {
+      ppm += (i % 15 == 0) ? "\n" :" ";
+      ppm += this.colorToPPM(new Color(this.pixels[i], this.pixels[i+1], this.pixels[i+2]));
+    }
+    ppm+="\n";
+    return ppm;
   }
 
   pointInBounds(point: Point) {
     return Math.round(point.x) <= this.width && Math.round(point.y) <= this.height;
-  }
-
-  private colorPPMArrayToString(colorValues: string[]): string {
-    let result = '';
-    let currentLineLength = 0;
-
-    colorValues.forEach((x, index) => {
-      if (x.length + currentLineLength > 70 || index > 0 && (index % (this.width) === 0)) {
-        result = result.slice(0, -1);
-        result += `\n${x} `;
-        currentLineLength = 0;
-      } else {
-        result += `${x} `;
-        currentLineLength += (x.length + 1);
-      }
-    });
-
-    return result.slice(0, -1);
   }
 
   private colorToPPM(color: Color): string {
