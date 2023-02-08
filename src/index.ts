@@ -54,7 +54,7 @@ const world = new World();
 world.light = new Light(new Point(-10, 10, -10), new Color(1, 1, 1));
 world.objects = [floor, leftWall, rightWall, middle, right, left];
 
-const camera = new Camera(1024, 1024, Math.PI/3);
+const camera = new Camera(512, 512, Math.PI/3);
 camera.transform = new ViewTransform(new Point(0, 1.5, -5),
   new Point(0, 1, 0),
   new Vector(0, 1, 0));

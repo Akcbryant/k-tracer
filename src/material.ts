@@ -8,15 +8,16 @@ export class Material {
   public specular = 0.9;
   public shininess = 200.0;
 
-  lighting(light: Light, position: Point, eyeVector: Vector, normalVector: Vector) {
+  lighting(light: Light, position: Point, eyeVector: Vector, normalVector: Vector, inShadow: boolean) {
     // combine the surface color with the light's color/intensity
     const effectiveColor = Color.hadamardProduct(this.color, light.intensity);
 
-    // find the direction to the light source
-    const lightVector = light.position.subtract(position).normalize();
-
     // compute the ambient contribution
     const ambient = effectiveColor.multiply(this.ambient);
+    if (inShadow) return ambient;
+
+    // find the direction to the light source
+    const lightVector = light.position.subtract(position).normalize();
 
     // light_dot_normal represents the cosine of the angle between the
     // light vector and the normal vector. A negative number means the

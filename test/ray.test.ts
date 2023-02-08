@@ -2,6 +2,7 @@ import {Point, Vector} from "../src/tuples";
 import {Intersection, Intersections, Ray} from "../src/ray";
 import {IdentityMatrix, RotationZ, Scaling, Translation} from "../src/matrix";
 import {Sphere} from "../src/sphere";
+import {EPSILON} from "../src/constants";
 
 describe('ray', () => {
   it('creates a ray with origin and direction', () => {
@@ -149,6 +150,18 @@ describe('Intersection', () => {
       expect(computations.normalV.x).toBeCloseTo(0);
       expect(computations.normalV.y).toBeCloseTo(0);
       expect(computations.inside).toBe(true);
+    });
+
+    it('the hit should offset the point', () => {
+      const ray = new Ray(new Point(0, 0, -5), new Vector(0, 0, 1));
+      const shape = new Sphere();
+      shape.transform = new Translation(0, 0, 1);
+      const intersection = new Intersection(5, shape);
+
+      const computations = intersection.prepareComputations(ray);
+
+      expect(computations.overPoint.z).toBeLessThan(EPSILON/2);
+      expect(computations.point.z).toBeGreaterThan(computations.overPoint.z);
     });
   });
 });

@@ -28,10 +28,13 @@ export class World {
   }
 
   public shadeHit(computations: Computations): Color {
-    return computations.object.material.lighting(this.light,
-        computations.point,
-        computations.eyeV,
-        computations.normalV);
+    const isShadowed = this.isShadowed(computations.overPoint);
+    return computations.object.material.lighting(
+      this.light,
+      computations.overPoint,
+      computations.eyeV,
+      computations.normalV,
+      isShadowed);
   }
 
   public colorAt(ray: Ray): Color {
@@ -44,5 +47,16 @@ export class World {
     }
 
     return new Color(0, 0, 0);
+  }
+
+  public isShadowed(point: Point): boolean {
+    const vector = this.light.position.subtract(point);
+    const distance = vector.magnitude();
+    const direction = vector.normalize();
+    const ray = new Ray(point, direction);
+    const intersections = this.intersect(ray);
+    const hit = intersections.hit();
+
+    return hit != null && hit.t < distance;
   }
 }

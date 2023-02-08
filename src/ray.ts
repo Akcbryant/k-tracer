@@ -1,6 +1,7 @@
 import {Point, Vector} from "./tuples";
 import {Translation} from "./matrix";
 import {WorldObject} from "./sphere";
+import {EPSILON} from "./constants";
 
 export class Ray {
   origin: Point;
@@ -33,15 +34,19 @@ export class Intersection {
 
   prepareComputations(ray: Ray): Computations {
     const point = ray.position(this.t);
-    const normalV = this.object.normalAt(point);
+    let normalV = this.object.normalAt(point);
     const eyeV = ray.direction.negate();
     const isInside = Vector.dot(normalV, eyeV) < 0;
+    normalV = isInside ? normalV.negate() : normalV;
+    const surfaceOffset = normalV.multiply(EPSILON)
+
     return {
       t: this.t,
       object: this.object,
       point: point,
+      overPoint: point.add(surfaceOffset),
       eyeV: eyeV,
-      normalV: isInside ? normalV.negate() : normalV,
+      normalV: normalV,
       inside: isInside
     }
   }
@@ -65,6 +70,7 @@ export class Computations {
   t!: number;
   object!: WorldObject;
   point!: Point;
+  overPoint!: Point;
   eyeV!: Point;
   normalV!: Point;
   inside!: boolean;

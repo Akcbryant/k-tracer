@@ -1,7 +1,7 @@
 import {World} from "../src/world";
 import {Sphere} from "../src/sphere";
 import {Color, Point, Vector} from "../src/tuples";
-import {Scaling} from "../src/matrix";
+import {Scaling, Translation} from "../src/matrix";
 import {Light} from "../src/light";
 import {Intersection, Ray} from "../src/ray";
 
@@ -64,6 +64,23 @@ describe('World', () => {
       expect(result.green).toBeCloseTo(0.90498);
       expect(result.blue).toBeCloseTo(0.90498);
     });
+
+    it('is given an intersection in shadow', () => {
+      const world = new World();
+      world.light = new Light(new Point(0, 0, -10), new Color(1, 1, 1))
+      const sphere1 = new Sphere();
+      world.objects.push(sphere1);
+      const sphere2 = new Sphere();
+      sphere2.transform = new Translation(0, 0, 10);
+      world.objects.push(sphere2);
+      const ray = new Ray(new Point(0, 0, 5), new Vector(0, 0, 1));
+      const intersection = new Intersection(4, sphere2);
+      const comps = intersection.prepareComputations(ray);
+
+      const result = world.shadeHit(comps);
+
+      expect(result).toEqual(new Color(0.1, 0.1, 0.1));
+    });
   });
 
   describe('colorAt', () => {
@@ -98,6 +115,40 @@ describe('World', () => {
       const result = world.colorAt(ray);
 
       expect(result).toEqual(inner.material.color);
+    });
+  });
+
+  describe('isShadowed', () => {
+    it('returns false when there is no shadow when nothing is collinear with point and light', () => {
+      const world = new World();
+
+      const point = new Point(0, 10, 0);
+
+      expect(world.isShadowed(point)).toBe(false);
+    });
+
+    it('returns true when an object is between the point and the light', () => {
+      const world = new World();
+
+      const point = new Point(10, -10, 10);
+
+      expect(world.isShadowed(point)).toBe(true);
+    });
+
+    it('returns false when there is no shadow when an object is behind the light', () => {
+      const world = new World();
+
+      const point = new Point(-20, 20, 20);
+
+      expect(world.isShadowed(point)).toBe(false);
+    });
+
+    it('returns false when an object is behind the point', () => {
+      const world = new World();
+
+      const point = new Point(-2, 2, 2);
+
+      expect(world.isShadowed(point)).toBe(false);
     });
   });
 });

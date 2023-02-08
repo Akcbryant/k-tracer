@@ -27,7 +27,7 @@ describe('material', () => {
       const normalV = new Vector(0, 0, -1);
       const light = new Light(new Point(0, 0, -10), new Color(1, 1, 1));
 
-      const result = material.lighting(light, position, eyeV, normalV);
+      const result = material.lighting(light, position, eyeV, normalV, false);
 
       expect(result).toEqual(new Color(1.9, 1.9, 1.9));
     });
@@ -37,7 +37,7 @@ describe('material', () => {
       const normalV = new Vector(0, 0, -1);
       const light = new Light(new Point(0, 0, -10), new Color(1, 1, 1));
 
-      const result = material.lighting(light, position, eyeV, normalV);
+      const result = material.lighting(light, position, eyeV, normalV, false);
 
       expect(result).toEqual(new Color(1, 1, 1));
     });
@@ -47,7 +47,7 @@ describe('material', () => {
       const normalV = new Vector(0, 0, -1);
       const light = new Light(new Point(0, 10, -10), new Color(1, 1, 1));
 
-      const result = material.lighting(light, position, eyeV, normalV);
+      const result = material.lighting(light, position, eyeV, normalV, false);
 
       const expected = new Color(0.7364, 0.7364, 0.7364)
       expect(result.red).toBeCloseTo(expected.red);
@@ -60,7 +60,7 @@ describe('material', () => {
       const normalV = new Vector(0, 0, -1);
       const light = new Light(new Point(0, 10, -10), new Color(1, 1, 1));
 
-      const result = material.lighting(light, position, eyeV, normalV);
+      const result = material.lighting(light, position, eyeV, normalV, false);
 
       const expected = new Color(1.6364, 1.6364, 1.6364);
       expect(result.red).toBeCloseTo(expected.red);
@@ -73,9 +73,22 @@ describe('material', () => {
       const normalV = new Vector(0, 0, -1);
       const light = new Light(new Point(0, 0, 10), new Color(1, 1, 1));
 
-      const result = material.lighting(light, position, eyeV, normalV);
+      const result = material.lighting(light, position, eyeV, normalV, false);
 
       expect(result).toEqual(new Color(0.1, 0.1, 0.1));
+    });
+
+    it('lights with the surface in shadow', () => {
+      const eyeV = new Vector(0, 0, -1);
+      const normalV = new Vector(0, 0, -1);
+      const light = new Light(new Point(0, 0, -10), new Color(1, 1, 1));
+
+      const result = material.lighting(light, position, eyeV, normalV, true);
+
+      const expected = new Color(0.1, 0.1, 0.1);
+      expect(result.red).toBeCloseTo(expected.red);
+      expect(result.green).toBeCloseTo(expected.green);
+      expect(result.blue).toBeCloseTo(expected.blue);
     });
   });
 });
