@@ -62,7 +62,7 @@ function writeSphereToCanvas(): void {
         const point = ray.position(hit.t)
         const normal = shape.normalAt(point);
         const eye = ray.direction.negate();
-        const normalizedColor = shape.material.lighting(light, point, eye, normal);
+        const normalizedColor = shape.material.lighting(light, point, eye, normal, false);
         canvas.writePixel(x, y, normalizedColor);
       }
     }

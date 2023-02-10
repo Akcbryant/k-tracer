@@ -2,15 +2,9 @@ import {IdentityMatrix} from "./matrix";
 import {Point, Vector} from "./tuples";
 import {Intersection, Intersections, Ray} from "./ray";
 import {Material} from "./material";
+import {IShape} from "./shape";
 
-export interface WorldObject {
-  transform: IdentityMatrix;
-  material: Material;
-  intersect(ray: Ray): Intersections;
-  normalAt(worldPoint: Point): Vector;
-}
-
-export class Sphere implements WorldObject {
+export class Sphere implements IShape {
   public transform = new IdentityMatrix();
   public material = new Material();
 

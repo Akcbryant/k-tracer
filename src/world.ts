@@ -1,12 +1,13 @@
 import {Light} from "./light";
 import {Color, Point} from "./tuples";
-import {Sphere, WorldObject} from "./sphere";
+import {Sphere} from "./sphere";
 import {Scaling} from "./matrix";
 import {Computations, Intersections, Ray} from "./ray";
+import {IShape} from "./shape";
 
 export class World {
   light: Light;
-  objects: WorldObject[];
+  objects: IShape[];
 
   constructor() {
     this.light = new Light(new Point(-10, 10, -10), new Color(1, 1, 1));

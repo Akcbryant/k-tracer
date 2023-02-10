@@ -1,7 +1,7 @@
 import {Point, Vector} from "./tuples";
 import {Translation} from "./matrix";
-import {WorldObject} from "./sphere";
 import {EPSILON} from "./constants";
+import {IShape} from "./shape";
 
 export class Ray {
   origin: Point;
@@ -25,9 +25,9 @@ export class Ray {
 
 export class Intersection {
   t: number;
-  object: WorldObject;
+  object: IShape;
 
-  constructor(t: number, object: WorldObject) {
+  constructor(t: number, object: IShape) {
     this.t = t;
     this.object = object;
   }
@@ -68,7 +68,7 @@ export class Intersections {
 
 export class Computations {
   t!: number;
-  object!: WorldObject;
+  object!: IShape;
   point!: Point;
   overPoint!: Point;
   eyeV!: Point;

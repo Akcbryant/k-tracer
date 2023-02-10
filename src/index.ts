@@ -5,29 +5,29 @@ import {Material} from "./material";
 import {Light} from "./light";
 import {World} from "./world";
 import {Camera} from "./camera";
+import {Plane} from "./plane";
 
 // entry point for npm run start:dev
 const fs = require('fs');
 
-const floor = new Sphere();
-floor.transform = new Scaling(10, 0.01, 10);
-floor.material = new Material();
-floor.material.color = new Color(1, 0.9, 0.9);
-floor.material.specular = 0;
+const floor = new Plane();
+floor.material= new Material();
+floor.material.color=new Color(0.9,1.0,0.9);
+floor.material.specular=0.5;
 
-const leftWall = new Sphere();
-leftWall.transform = new Translation(0, 0, 5)
-  .multiply(new RotationY(-Math.PI/4))
-  .multiply(new RotationX(Math.PI/2))
-  .multiply(new Scaling(10, 0.01, 10));
-leftWall.material = floor.material;
-
-const rightWall = new Sphere();
-rightWall.transform = new Translation(0, 0, 5)
-  .multiply(new RotationY(Math.PI/4))
-  .multiply(new RotationX(Math.PI/2))
-  .multiply(new Scaling(10, 0.01, 10));
-rightWall.material = floor.material;
+// const leftWall = new Sphere();
+// leftWall.transform = new Translation(0, 0, 5)
+//   .multiply(new RotationY(-Math.PI/4))
+//   .multiply(new RotationX(Math.PI/2))
+//   .multiply(new Scaling(10, 0.01, 10));
+// leftWall.material = floor.material;
+//
+// const rightWall = new Sphere();
+// rightWall.transform = new Translation(0, 0, 5)
+//   .multiply(new RotationY(Math.PI/4))
+//   .multiply(new RotationX(Math.PI/2))
+//   .multiply(new Scaling(10, 0.01, 10));
+// rightWall.material = floor.material;
 
 const middle = new Sphere();
 middle.transform = new Translation(-0.5, 1, 0.5);
@@ -52,7 +52,7 @@ left.material.specular = 0.3;
 
 const world = new World();
 world.light = new Light(new Point(-10, 10, -10), new Color(1, 1, 1));
-world.objects = [floor, leftWall, rightWall, middle, right, left];
+world.objects = [floor, middle, right, left];
 
 const camera = new Camera(512, 512, Math.PI/3);
 camera.transform = new ViewTransform(new Point(0, 1.5, -5),

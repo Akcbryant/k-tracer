@@ -52,6 +52,7 @@ export class Camera {
     const image = new Canvas(this.hSize, this.vSize);
 
     for (let y = 0; y < this.vSize; y++) {
+      // TODO: Create proper loading percentage logging?
       console.log('current y', y)
       for (let x = 0; x < this.hSize; x++) {
         const ray = this.rayForPixel(x, y);
