@@ -1,5 +1,7 @@
 import {Color, Point, Vector} from "./tuples";
 import {Light} from "./light";
+import {Pattern} from "./pattern";
+import {IShape} from "./shape";
 
 export class Material {
   public color = new Color(1, 1, 1);
@@ -7,10 +9,13 @@ export class Material {
   public diffuse = 0.9;
   public specular = 0.9;
   public shininess = 200.0;
+  public pattern?: Pattern;
 
-  lighting(light: Light, position: Point, eyeVector: Vector, normalVector: Vector, inShadow: boolean) {
+  lighting(object: IShape, light: Light, position: Point, eyeVector: Vector, normalVector: Vector, inShadow: boolean) {
+    const color = this.pattern?.patternAtShape(object, position) ?? this.color;
+
     // combine the surface color with the light's color/intensity
-    const effectiveColor = Color.hadamardProduct(this.color, light.intensity);
+    const effectiveColor = Color.hadamardProduct(color, light.intensity);
 
     // compute the ambient contribution
     const ambient = effectiveColor.multiply(this.ambient);

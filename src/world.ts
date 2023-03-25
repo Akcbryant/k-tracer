@@ -31,6 +31,7 @@ export class World {
   public shadeHit(computations: Computations): Color {
     const isShadowed = this.isShadowed(computations.overPoint);
     return computations.object.material.lighting(
+      computations.object,
       this.light,
       computations.overPoint,
       computations.eyeV,
