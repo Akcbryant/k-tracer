@@ -1,3 +1,9 @@
+### Chapter 10
+
+![Screenshot](../renders/k-tracer-chapter-10.png)
+
+![Screenshot](../renders/k-tracer-chapter-10.1.png)
+
 ### Chapter 9
 
 ![Screenshot](../renders/k-tracer-chapter-9.png)

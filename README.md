@@ -13,8 +13,10 @@ Basic summary of how ray tracing works:
 * Otherwise, reflect, refract or absorb the ray, and go back to step 2 with the resulting ray
 
 ## Latest Chapter Completed Render:
-### Chapter 9
+### Chapter 10
 
-![Screenshot](renders/k-tracer-chapter-9.png)
+![Screenshot](renders/k-tracer-chapter-10.png)
+
+![Screenshot](renders/k-tracer-chapter-10.1.png)
 
 ### [Link to all completed chapters](renders)
